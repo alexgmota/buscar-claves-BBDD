@@ -1,7 +1,3 @@
-package org.example;
-
-import java.util.Arrays;
-
 /**
  * Hello world!
  *
