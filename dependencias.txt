@@ -10,5 +10,5 @@ E -> F
 F -> E
 C E A -> H
 A B -> E
-A -> B
+E A -> B
 A -> D

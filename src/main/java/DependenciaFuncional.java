@@ -35,4 +35,8 @@ public class DependenciaFuncional {
     public  boolean isImplicado(String atributo) {
         return implicados.contains(atributo);
     }
+
+    public boolean contieneImplicante(List<String> atributos){
+        return atributos.containsAll(implicantes);
+    }
 }

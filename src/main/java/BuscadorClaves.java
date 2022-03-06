@@ -1,9 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class BuscadorClaves {
     List<DependenciaFuncional> dependencias;
@@ -22,11 +20,24 @@ public class BuscadorClaves {
         atributosSoloImplicados = new ArrayList<>();
     }
 
-    public List<String> buscarClaves(){
-        List<String> claves = new ArrayList<>();
+    public List<List<String>> buscarClaves(){
+        List<List<String>> claves = new ArrayList<>();
         cargarDatos();
         clasificarAtributos();
+        buscarClaves(claves);
         return claves;
+    }
+
+    private void buscarClaves(List<List<String>> claves) {
+        List<String> atributosNecesarios = new ArrayList<>();
+        atributosNecesarios.addAll(atributosNoDF);
+        atributosNecesarios.addAll(atributosSoloImplicantes);
+        if (esClave(atributosNecesarios))
+            claves.add(atributosNecesarios);
+        else {
+            buscarCombinacionesAtributosPosibles(claves, atributosNecesarios);
+        }
+        System.out.println();
     }
 
     private void cargarDatos() {
@@ -35,6 +46,7 @@ public class BuscadorClaves {
         try {
             sc = new Scanner(file);
             leerArchivo(sc);
+            sc.close();
             comprobarDF();
         } catch (FileNotFoundException e) {
             System.out.println("No se ha encontrado el archivo.");
@@ -103,5 +115,54 @@ public class BuscadorClaves {
         if (atributosSoloImplicados.size() == 0) System.out.print(" ");
         System.out.print(" | ");
         System.out.println(Arrays.toString(atributosImplicadosImplicantes.toArray()));
+        System.out.println();
+    }
+
+    private boolean esClave(List<String> candidatos) {
+        List<String> cierre = new ArrayList<>();
+        calcularCierre(candidatos, cierre);
+        return cierre.size() == atributos.size();
+    }
+
+    private void calcularCierre(List<String> candidatos, List<String> cierre) {
+
+        cierre.addAll(candidatos);
+            for (int i = 0; i < dependencias.size(); i++) {
+                DependenciaFuncional df = dependencias.get(i);
+                if (df.contieneImplicante(cierre))
+                    for (String aux : df.getImplicados()){
+                        if (!cierre.contains(aux)) {
+                            i = 0;
+                            cierre.add(aux);
+                        }
+                    }
+
+            }
+        imprimirCierre(candidatos, cierre);
+    }
+
+    private void imprimirCierre(List<String> candidatos, List<String> cierre) {
+        System.out.print((Arrays.toString(candidatos.toArray())
+                        + "+ = " +
+                        Arrays.toString(cierre.toArray()))
+                            .replace('[','(')
+                            .replace(']',')')
+                            .replaceAll(", ", "")
+        );
+        if (atributos.size() == cierre.size()) System.out.println("  == T");
+        else System.out.println("  != T");
+    }
+
+    private void buscarCombinacionesAtributosPosibles(List<List<String>> claves, List<String> atributosNecesarios) {
+        Queue<List<String>> posiblesCombinaciones = new LinkedList<List<String>>();
+        for (String atributo : atributosImplicadosImplicantes){
+            List<String> aux = new ArrayList<String>(atributosNecesarios);
+            aux.add(atributo);
+            posiblesCombinaciones.add(aux);
+        }
+        while (posiblesCombinaciones.size() > 0){
+            List<String> posibleClave = posiblesCombinaciones.poll();
+            if (esClave(posibleClave)) claves.add(posibleClave);
+        }
     }
 }
