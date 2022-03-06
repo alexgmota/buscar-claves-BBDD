@@ -11,8 +11,8 @@ public class DependenciaFuncional {
 
         String[] vdf = df.split("->");
         if (vdf.length != 2) throw new Exception("Dependencia funcional incorrecta");
-        aniadir(implicados, vdf[0].split(" "));
-        aniadir(implicantes, vdf[1].split(" "));
+        aniadir(implicantes, vdf[0].split(" "));
+        aniadir(implicados, vdf[1].split(" "));
     }
 
     private void aniadir (List<String> lista, String[] candidatos){
@@ -26,5 +26,13 @@ public class DependenciaFuncional {
 
     public List<String> getImplicantes() {
         return implicantes;
+    }
+
+    public  boolean isImplicante(String atributo) {
+        return implicantes.contains(atributo);
+    }
+
+    public  boolean isImplicado(String atributo) {
+        return implicados.contains(atributo);
     }
 }
