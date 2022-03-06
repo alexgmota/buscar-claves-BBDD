@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class BuscadorClaves {
@@ -154,9 +153,9 @@ public class BuscadorClaves {
     }
 
     private void buscarCombinacionesAtributosPosibles(List<List<String>> claves, List<String> atributosNecesarios) {
-        Queue<List<String>> posiblesCombinaciones = new LinkedList<List<String>>();
+        Queue<List<String>> posiblesCombinaciones = new LinkedList<>();
         for (String atributo : atributosImplicadosImplicantes){
-            List<String> aux = new ArrayList<String>(atributosNecesarios);
+            List<String> aux = new ArrayList<>(atributosNecesarios);
             aux.add(atributo);
             posiblesCombinaciones.add(aux);
         }
