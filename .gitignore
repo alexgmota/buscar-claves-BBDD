@@ -1,8 +1,8 @@
 target/
+.idea/
 # Compiled class file
 *.class
 
-.idea/
 
 # Package Files #
 *.jar
