@@ -23,11 +23,11 @@ public class BuscadorClaves {
         List<List<String>> claves = new ArrayList<>();
         cargarDatos(fichero);
         clasificarAtributos();
-        buscarClaves(claves);
+        probarClaves(claves);
         return claves;
     }
 
-    private void buscarClaves(List<List<String>> claves) {
+    private void probarClaves(List<List<String>> claves) {
         List<String> atributosNecesarios = new ArrayList<>();
         atributosNecesarios.addAll(atributosNoDF);
         atributosNecesarios.addAll(atributosSoloImplicantes);
