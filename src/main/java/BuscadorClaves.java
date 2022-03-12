@@ -19,9 +19,9 @@ public class BuscadorClaves {
         atributosSoloImplicados = new ArrayList<>();
     }
 
-    public List<List<String>> buscarClaves(){
+    public List<List<String>> buscarClaves(String fichero){
         List<List<String>> claves = new ArrayList<>();
-        cargarDatos();
+        cargarDatos(fichero);
         clasificarAtributos();
         buscarClaves(claves);
         return claves;
@@ -39,8 +39,8 @@ public class BuscadorClaves {
         System.out.println();
     }
 
-    private void cargarDatos() {
-        File file = new File("dependencias.txt");
+    private void cargarDatos(String fichero) {
+        File file = new File(fichero);
         Scanner sc;
         try {
             sc = new Scanner(file);
@@ -96,24 +96,27 @@ public class BuscadorClaves {
     }
 
     private void imprimirTabla() {
-        int max = Math.max(atributosNoDF.size(), atributosSoloImplicados.size());
-        int tam = Math.max(atributosNoDF.size() + atributosSoloImplicantes.size(),
-                atributosSoloImplicados.size() + atributosImplicadosImplicantes.size());
+        String supIzq = Arrays.toString(atributosNoDF.toArray());
+        String infIzq = Arrays.toString(atributosSoloImplicados.toArray());
+        String supDcha = Arrays.toString(atributosSoloImplicantes.toArray());
+        String infDcha = Arrays.toString(atributosImplicadosImplicantes.toArray());
 
-        System.out.print(Arrays.toString(atributosNoDF.toArray()));
-        for (int i = atributosNoDF.size(); i < max-1; i++) System.out.print("   ");
-        if (atributosNoDF.size() == 0) System.out.print(" ");
+        int max = Math.max(supIzq.length(), infIzq.length());
+        int tam = Math.max(supIzq.length()+ supDcha.length(),
+                infIzq.length() + infDcha.length());
+
+        System.out.print(supIzq);
+        for (int i = supIzq.length(); i < max; i++) System.out.print(" ");
         System.out.print(" | ");
-        System.out.println(Arrays.toString(atributosSoloImplicantes.toArray()));
+        System.out.println(supDcha);
         for (int i = 0; i <= tam; i++)
             if (i == max) System.out.print("-+-");
-            else System.out.print("---");
+            else System.out.print("-");
         System.out.println();
-        System.out.print(Arrays.toString(atributosSoloImplicados.toArray()));
-        for (int i = atributosSoloImplicados.size(); i < max-1; i++) System.out.print("   ");
-        if (atributosSoloImplicados.size() == 0) System.out.print(" ");
+        System.out.print(infIzq);
+        for (int i = infIzq.length(); i < max; i++) System.out.print(" ");
         System.out.print(" | ");
-        System.out.println(Arrays.toString(atributosImplicadosImplicantes.toArray()));
+        System.out.println(infDcha);
         System.out.println();
     }
 
