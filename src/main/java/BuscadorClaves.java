@@ -84,8 +84,8 @@ public class BuscadorClaves {
             esImplicante = false;
             esImplicado = false;
             for (DependenciaFuncional df : dependencias) {
-                esImplicado = df.isImplicado(atributo);
-                esImplicante = df.isImplicante(atributo);
+                if (df.isImplicado(atributo)) esImplicado = true;
+                if (df.isImplicante(atributo)) esImplicante = true;
                 if (esImplicado && esImplicante) break;
             }
             if (esImplicado && esImplicante) atributosImplicadosImplicantes.add(atributo);

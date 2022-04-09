@@ -8,6 +8,9 @@
   <artifactId>buscar-claves-BBDD</artifactId>
   <version>1.0-SNAPSHOT</version>
 
+  <name>buscar-clave-BBDD</name>
+  <description>Buscar las claves al normalizar una base de datos</description>
+
   <properties>
     <maven.compiler.source>16</maven.compiler.source>
     <maven.compiler.target>16</maven.compiler.target>

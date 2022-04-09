@@ -26,6 +26,8 @@ public class AppTest
         solEsperada.add(clave1);
         solEsperada.add(clave2);
 
-        assertEquals(solEsperada, solucion);
+        assertEquals(solEsperada.size(), solucion.size());
+        for (int i = 0; i < solEsperada.size(); i++)
+            assertEquals(solEsperada.get(i).getClave(), solucion.get(i).getClave());
     }
 }

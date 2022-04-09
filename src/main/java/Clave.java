@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class Clave {
 
@@ -72,6 +69,10 @@ public class Clave {
         );
         if (atributos.size() == cierre.size()) System.out.println("  == T");
         else System.out.println("  != T");
+    }
+
+    public boolean equals(Clave clave) {
+        return this.clave.size() == clave.getClave().size() && this.toString().equals(clave.toString());
     }
 
 }
