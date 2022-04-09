@@ -19,20 +19,21 @@ public class BuscadorClaves {
         atributosSoloImplicados = new ArrayList<>();
     }
 
-    public List<List<String>> buscarClaves(String fichero){
-        List<List<String>> claves = new ArrayList<>();
+    public List<Clave> buscarClaves(String fichero){
+        List<Clave> claves = new ArrayList<>();
         cargarDatos(fichero);
         clasificarAtributos();
         probarClaves(claves);
         return claves;
     }
 
-    private void probarClaves(List<List<String>> claves) {
+    private void probarClaves(List<Clave> claves) {
         List<String> atributosNecesarios = new ArrayList<>();
         atributosNecesarios.addAll(atributosNoDF);
         atributosNecesarios.addAll(atributosSoloImplicantes);
-        if (esClave(atributosNecesarios))
-            claves.add(atributosNecesarios);
+        Clave posibleClave = new Clave(atributosNecesarios);
+        if (posibleClave.esClave(atributos, dependencias))
+            claves.add(new Clave(atributosNecesarios));
         else {
             buscarCombinacionesAtributosPosibles(claves, atributosNecesarios);
         }
@@ -83,8 +84,8 @@ public class BuscadorClaves {
             esImplicante = false;
             esImplicado = false;
             for (DependenciaFuncional df : dependencias) {
-                if (df.isImplicado(atributo)) esImplicado = true;
-                if (df.isImplicante(atributo)) esImplicante = true;
+                esImplicado = df.isImplicado(atributo);
+                esImplicante = df.isImplicante(atributo);
                 if (esImplicado && esImplicante) break;
             }
             if (esImplicado && esImplicante) atributosImplicadosImplicantes.add(atributo);
@@ -120,86 +121,51 @@ public class BuscadorClaves {
         System.out.println();
     }
 
-    private boolean esClave(List<String> candidatos) {
-        List<String> cierre = new ArrayList<>();
-        calcularCierre(candidatos, cierre);
-        return cierre.size() == atributos.size();
-    }
-
-    private void calcularCierre(List<String> candidatos, List<String> cierre) {
-
-        cierre.addAll(candidatos);
-            for (int i = 0; i < dependencias.size(); i++) {
-                DependenciaFuncional df = dependencias.get(i);
-                if (df.contieneImplicante(cierre))
-                    for (String aux : df.getImplicados()){
-                        if (!cierre.contains(aux)) {
-                            i = -1;
-                            cierre.add(aux);
-                        }
-                    }
-
-            }
-        imprimirCierre(candidatos, cierre);
-    }
-
-    private void imprimirCierre(List<String> candidatos, List<String> cierre) {
-        System.out.print((Arrays.toString(candidatos.toArray())
-                        + "+ = " +
-                        Arrays.toString(cierre.toArray()))
-                            .replace('[','(')
-                            .replace(']',')')
-                            .replaceAll(", ", "")
-        );
-        if (atributos.size() == cierre.size()) System.out.println("  == T");
-        else System.out.println("  != T");
-    }
-
-    private void buscarCombinacionesAtributosPosibles(List<List<String>> claves, List<String> atributosNecesarios) {
-        Queue<List<String>> posiblesCombinaciones = new LinkedList<>();
+    private void buscarCombinacionesAtributosPosibles(List<Clave> claves, List<String> atributosNecesarios) {
+        Queue<Clave> posiblesCombinaciones = new LinkedList<>();
         List<String> atributosPosibles = new ArrayList<>(atributosImplicadosImplicantes);
 
         for (String atributo : atributosPosibles){
-            List<String> aux = new ArrayList<>(atributosNecesarios);
-            aux.add(atributo);
+            Clave aux = new Clave(atributosNecesarios);
+            aux.addAtributo(atributo);
             posiblesCombinaciones.add(aux);
         }
         while (posiblesCombinaciones.size() > 0){
-            List<String> posibleClave = posiblesCombinaciones.poll();
-            if (esClave(posibleClave)) {
+            Clave posibleClave = posiblesCombinaciones.poll();
+            if (posibleClave.esClave(atributos, dependencias)) {
                 claves.add(posibleClave);
-                atributosPosibles.removeAll(posibleClave);
+                atributosPosibles.removeAll(posibleClave.getClave());
             }
         }
         buscarCombinacionesAtributosPosibles2(claves, atributosNecesarios, atributosPosibles);
     }
 
-    private void buscarCombinacionesAtributosPosibles2(List<List<String>> claves, List<String> atributosNecesarios,
+    private void buscarCombinacionesAtributosPosibles2(List<Clave> claves, List<String> atributosNecesarios,
                                                        List<String> atributosPosibles) {
-        Queue<List<String>> posiblesCombinaciones = new LinkedList<>();
+        Queue<Clave> posiblesCombinaciones = new LinkedList<>();
 
         for (String atributo : atributosPosibles){
             for (String atributo2 : atributosPosibles) {
                 if (!atributo2.equals(atributo)){
-                    List<String> aux = new ArrayList<>(atributosNecesarios);
-                    aux.add(atributo);
-                    aux.add(atributo2);
+                    Clave aux = new Clave(atributosNecesarios);
+                    aux.addAtributo(atributo);
+                    aux.addAtributo(atributo2);
                     if (!estaEnClaves(posiblesCombinaciones, aux))
                         posiblesCombinaciones.add(aux);
                 }
             }
         }
         while (posiblesCombinaciones.size() > 0){
-            List<String> posibleClave = posiblesCombinaciones.poll();
-            if (esClave(posibleClave)) {
+            Clave posibleClave = posiblesCombinaciones.poll();
+            if (posibleClave.esClave(atributos, dependencias)) {
                 claves.add(posibleClave);
-                atributosPosibles.removeAll(posibleClave);
+                atributosPosibles.removeAll(posibleClave.getClave());
             }
         }
     }
 
-    private boolean estaEnClaves(Queue<List<String>> claves, List<String> posibleClave) {
-        for (List<String> clave : claves)
+    private boolean estaEnClaves(Queue<Clave> claves, Clave posibleClave) {
+        for (Clave clave : claves)
             if (clave.containsAll(posibleClave))
                 return true;
         return false;

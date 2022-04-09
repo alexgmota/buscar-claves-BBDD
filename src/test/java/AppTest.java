@@ -1,5 +1,4 @@
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -12,17 +11,17 @@ public class AppTest
     @Test
     public void testEj6 () {
         BuscadorClaves bc = new BuscadorClaves();
-        List<List<String>> solucion = bc.buscarClaves("dependenciasEj6.txt");
+        List<Clave> solucion = bc.buscarClaves("dependenciasEj6.txt");
 
-        List<List<String >> solEsperada =  new ArrayList<>();
-        List<String> clave1 = new ArrayList<>();
-        clave1.add("A");
-        clave1.add("B");
+        List<Clave> solEsperada =  new ArrayList<>();
+        Clave clave1 = new Clave();
+        clave1.addAtributo("A");
+        clave1.addAtributo("B");
 
-        List<String> clave2 = new ArrayList<>();
-        clave2.add("A");
-        clave2.add("C");
-        clave2.add("D");
+        Clave clave2 = new Clave();
+        clave2.addAtributo("A");
+        clave2.addAtributo("C");
+        clave2.addAtributo("D");
 
         solEsperada.add(clave1);
         solEsperada.add(clave2);
