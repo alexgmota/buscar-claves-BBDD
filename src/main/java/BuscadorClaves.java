@@ -9,6 +9,7 @@ public class BuscadorClaves {
     List<String> atributosSoloImplicantes;
     List<String> atributosImplicadosImplicantes;
     List<String> atributosSoloImplicados;
+    List<Clave> claves;
 
     public BuscadorClaves() {
         dependencias = new ArrayList<>();
@@ -17,6 +18,7 @@ public class BuscadorClaves {
         atributosSoloImplicantes = new ArrayList<>();
         atributosImplicadosImplicantes = new ArrayList<>();
         atributosSoloImplicados = new ArrayList<>();
+        claves = new ArrayList<>();
     }
 
     public List<String> getAtributosNoDF() {
@@ -35,12 +37,11 @@ public class BuscadorClaves {
         return atributosSoloImplicados;
     }
 
-    public List<Clave> buscarClaves(String fichero){
-        List<Clave> claves = new ArrayList<>();
+    public List<Clave> buscarClaves(String fichero) {
         cargarDatos(fichero);
         clasificarAtributos();
-        probarClaves(claves);
-        return claves;
+        probarClaves();
+        return this.claves;
     }
 
     private void cargarDatos(String fichero) {
@@ -99,7 +100,7 @@ public class BuscadorClaves {
         Gui.imprimirTabla(this);
     }
 
-    private void probarClaves(List<Clave> claves) {
+    private void probarClaves() {
         List<String> atributosNecesarios = new ArrayList<>();
         atributosNecesarios.addAll(atributosNoDF);
         atributosNecesarios.addAll(atributosSoloImplicantes);
@@ -107,12 +108,12 @@ public class BuscadorClaves {
         if (posibleClave.esClave(atributos, dependencias))
             claves.add(new Clave(atributosNecesarios));
         else {
-            buscarCombinacionesAtributosPosibles(claves, atributosNecesarios);
+            buscarCombinacionesAtributosPosibles(atributosNecesarios);
         }
         System.out.println();
     }
 
-    private void buscarCombinacionesAtributosPosibles(List<Clave> claves, List<String> atributosNecesarios) {
+    private void buscarCombinacionesAtributosPosibles(List<String> atributosNecesarios) {
         Queue<Clave> posiblesCombinaciones = new LinkedList<>();
         List<String> atributosPosibles = new ArrayList<>(atributosImplicadosImplicantes);
 
@@ -128,10 +129,10 @@ public class BuscadorClaves {
                 atributosPosibles.removeAll(posibleClave.getClave());
             }
         }
-        buscarCombinacionesAtributosPosibles2(claves, atributosNecesarios, atributosPosibles);
+        buscarCombinacionesAtributosPosibles2(atributosNecesarios, atributosPosibles);
     }
 
-    private void buscarCombinacionesAtributosPosibles2(List<Clave> claves, List<String> atributosNecesarios,
+    private void buscarCombinacionesAtributosPosibles2(List<String> atributosNecesarios,
                                                        List<String> atributosPosibles) {
         Queue<Clave> posiblesCombinaciones = new LinkedList<>();
 
