@@ -19,25 +19,28 @@ public class BuscadorClaves {
         atributosSoloImplicados = new ArrayList<>();
     }
 
+    public List<String> getAtributosNoDF() {
+        return atributosNoDF;
+    }
+
+    public List<String> getAtributosSoloImplicantes() {
+        return atributosSoloImplicantes;
+    }
+
+    public List<String> getAtributosImplicadosImplicantes() {
+        return atributosImplicadosImplicantes;
+    }
+
+    public List<String> getAtributosSoloImplicados() {
+        return atributosSoloImplicados;
+    }
+
     public List<Clave> buscarClaves(String fichero){
         List<Clave> claves = new ArrayList<>();
         cargarDatos(fichero);
         clasificarAtributos();
         probarClaves(claves);
         return claves;
-    }
-
-    private void probarClaves(List<Clave> claves) {
-        List<String> atributosNecesarios = new ArrayList<>();
-        atributosNecesarios.addAll(atributosNoDF);
-        atributosNecesarios.addAll(atributosSoloImplicantes);
-        Clave posibleClave = new Clave(atributosNecesarios);
-        if (posibleClave.esClave(atributos, dependencias))
-            claves.add(new Clave(atributosNecesarios));
-        else {
-            buscarCombinacionesAtributosPosibles(claves, atributosNecesarios);
-        }
-        System.out.println();
     }
 
     private void cargarDatos(String fichero) {
@@ -93,31 +96,19 @@ public class BuscadorClaves {
             else if (esImplicado) atributosSoloImplicados.add(atributo);
             else atributosNoDF.add(atributo);
         }
-        imprimirTabla();
+        Gui.imprimirTabla(this);
     }
 
-    private void imprimirTabla() {
-        String supIzq = Arrays.toString(atributosNoDF.toArray());
-        String infIzq = Arrays.toString(atributosSoloImplicados.toArray());
-        String supDcha = Arrays.toString(atributosSoloImplicantes.toArray());
-        String infDcha = Arrays.toString(atributosImplicadosImplicantes.toArray());
-
-        int max = Math.max(supIzq.length(), infIzq.length());
-        int tam = Math.max(supIzq.length()+ supDcha.length(),
-                infIzq.length() + infDcha.length());
-
-        System.out.print(supIzq);
-        for (int i = supIzq.length(); i < max; i++) System.out.print(" ");
-        System.out.print(" | ");
-        System.out.println(supDcha);
-        for (int i = 0; i <= tam; i++)
-            if (i == max) System.out.print("-+-");
-            else System.out.print("-");
-        System.out.println();
-        System.out.print(infIzq);
-        for (int i = infIzq.length(); i < max; i++) System.out.print(" ");
-        System.out.print(" | ");
-        System.out.println(infDcha);
+    private void probarClaves(List<Clave> claves) {
+        List<String> atributosNecesarios = new ArrayList<>();
+        atributosNecesarios.addAll(atributosNoDF);
+        atributosNecesarios.addAll(atributosSoloImplicantes);
+        Clave posibleClave = new Clave(atributosNecesarios);
+        if (posibleClave.esClave(atributos, dependencias))
+            claves.add(new Clave(atributosNecesarios));
+        else {
+            buscarCombinacionesAtributosPosibles(claves, atributosNecesarios);
+        }
         System.out.println();
     }
 

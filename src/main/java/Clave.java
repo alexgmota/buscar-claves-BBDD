@@ -15,9 +15,6 @@ public class Clave {
         clave.add(atributo);
     }
 
-    public void add(List<String> atributos) {
-        clave.addAll(atributos);
-    }
 
     public List<String> getClave() {
         return clave;
@@ -39,8 +36,9 @@ public class Clave {
     public boolean esClave(List<String> atributos, List<DependenciaFuncional> dependencias) {
         List<String> cierre = new ArrayList<>();
         calcularCierre(cierre, dependencias);
-        imprimirCierre(cierre, atributos);
-        return cierre.size() == atributos.size();
+        boolean esCierre = cierre.size() == atributos.size();
+        Gui.imprimirCierre(clave, cierre, esCierre);
+        return esCierre;
     }
 
     private void calcularCierre(List<String> cierre, List<DependenciaFuncional> dependencias) {
@@ -58,21 +56,4 @@ public class Clave {
 
         }
     }
-
-    private void imprimirCierre(List<String> cierre, List<String> atributos) {
-        System.out.print((Arrays.toString(clave.toArray())
-                + "+ = " +
-                Arrays.toString(cierre.toArray()))
-                .replace('[', '(')
-                .replace(']', ')')
-                .replaceAll(", ", "")
-        );
-        if (atributos.size() == cierre.size()) System.out.println("  == T");
-        else System.out.println("  != T");
-    }
-
-    public boolean equals(Clave clave) {
-        return this.clave.size() == clave.getClave().size() && this.toString().equals(clave.toString());
-    }
-
 }
