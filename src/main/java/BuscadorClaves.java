@@ -108,58 +108,40 @@ public class BuscadorClaves {
         if (posibleClave.esClave(atributos, dependencias))
             claves.add(new Clave(atributosNecesarios));
         else {
-            buscarCombinacionesAtributosPosibles(atributosNecesarios);
+            List<Clave> candidatos = new ArrayList<>();
+            candidatos.add(new Clave(atributosNecesarios));
+            buscarCombinaciones(candidatos, new ArrayList<>(atributosImplicadosImplicantes));
         }
         System.out.println();
     }
 
-    private void buscarCombinacionesAtributosPosibles(List<String> atributosNecesarios) {
-        Queue<Clave> posiblesCombinaciones = new LinkedList<>();
-        List<String> atributosPosibles = new ArrayList<>(atributosImplicadosImplicantes);
+    private void buscarCombinaciones(List<Clave> candidatos, List<String> atributosPosibles) {
+        List<Clave> sigCandidatos = new ArrayList<>();
+        List<String> sigAtributosPosibles = new ArrayList<>(atributosPosibles);
 
-        for (String atributo : atributosPosibles){
-            Clave aux = new Clave(atributosNecesarios);
-            aux.addAtributo(atributo);
-            posiblesCombinaciones.add(aux);
-        }
-        while (posiblesCombinaciones.size() > 0){
-            Clave posibleClave = posiblesCombinaciones.poll();
-            if (posibleClave.esClave(atributos, dependencias)) {
-                claves.add(posibleClave);
-                atributosPosibles.removeAll(posibleClave.getClave());
-            }
-        }
-        buscarCombinacionesAtributosPosibles2(atributosNecesarios, atributosPosibles);
-    }
-
-    private void buscarCombinacionesAtributosPosibles2(List<String> atributosNecesarios,
-                                                       List<String> atributosPosibles) {
-        Queue<Clave> posiblesCombinaciones = new LinkedList<>();
-
-        for (String atributo : atributosPosibles){
-            for (String atributo2 : atributosPosibles) {
-                if (!atributo2.equals(atributo)){
-                    Clave aux = new Clave(atributosNecesarios);
+        for(Clave candidata : candidatos) {
+            for (String atributo : atributosPosibles){
+                Clave aux = new Clave(candidata.getClave());
+                if (!aux.contains(atributo)){
                     aux.addAtributo(atributo);
-                    aux.addAtributo(atributo2);
-                    if (!estaEnClaves(posiblesCombinaciones, aux))
-                        posiblesCombinaciones.add(aux);
+                    if (noEstaEnClaves(claves, aux) && noEstaEnClaves(sigCandidatos, aux)
+                            && aux.esClave(atributos, dependencias)) {
+                        claves.add(aux);
+                        sigAtributosPosibles.removeAll(aux.getClave());
+                    } else if (noEstaEnClaves(sigCandidatos, aux)){
+                        sigCandidatos.add(aux);
+                    }
                 }
             }
         }
-        while (posiblesCombinaciones.size() > 0){
-            Clave posibleClave = posiblesCombinaciones.poll();
-            if (posibleClave.esClave(atributos, dependencias)) {
-                claves.add(posibleClave);
-                atributosPosibles.removeAll(posibleClave.getClave());
-            }
-        }
+        if (sigCandidatos.size() < atributosPosibles.size())
+            buscarCombinaciones(sigCandidatos, sigAtributosPosibles);
     }
 
-    private boolean estaEnClaves(Queue<Clave> claves, Clave posibleClave) {
+    private boolean noEstaEnClaves(List<Clave> claves, Clave posibleClave) {
         for (Clave clave : claves)
             if (clave.containsAll(posibleClave))
-                return true;
-        return false;
+                return false;
+        return true;
     }
 }

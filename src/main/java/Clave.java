@@ -20,6 +20,9 @@ public class Clave {
         return clave;
     }
 
+    public boolean contains(String atributo) {
+        return clave.contains(atributo);
+    }
 
     public boolean containsAll(Clave clave) {
         return this.clave.containsAll(clave.getClave());
