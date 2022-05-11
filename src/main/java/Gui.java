@@ -8,27 +8,33 @@ public class Gui {
         String supDcha = Arrays.toString(bc.getAtributosSoloImplicantes().toArray());
         String infDcha = Arrays.toString(bc.getAtributosImplicadosImplicantes().toArray());
 
-        int max = Math.max(supIzq.length(), infIzq.length());
-        int tam = Math.max(supIzq.length()+ supDcha.length(),
+        int mitad = Math.max(supIzq.length(), infIzq.length());
+        int tam = Math.max(supIzq.length() + supDcha.length(),
                 infIzq.length() + infDcha.length());
-
-        System.out.print(supIzq);
-        for (int i = supIzq.length(); i < max; i++) System.out.print(" ");
-        System.out.print(" | ");
-        System.out.println(supDcha);
-        for (int i = 0; i <= tam; i++)
-            if (i == max) System.out.print("-+-");
-            else System.out.print("-");
         System.out.println();
-        System.out.print(infIzq);
-        for (int i = infIzq.length(); i < max; i++) System.out.print(" ");
+        imprimirFila(supIzq, supDcha, mitad);
+        imprimirLineaHorizontal(mitad, tam);
+        imprimirFila(infIzq, infDcha, mitad);
+        System.out.println();
+    }
+
+    private static void imprimirFila(String izq, String dcha, int mitad) {
+        System.out.print(izq);
+        for (int i = izq.length(); i < mitad; i++) System.out.print(" ");
         System.out.print(" | ");
-        System.out.println(infDcha);
+        System.out.println(dcha);
+    }
+
+    private static void imprimirLineaHorizontal(int mitad, int tam) {
+        for (int i = 0; i <= tam; i++)
+            if (i == mitad) System.out.print("-+-");
+            else System.out.print("-");
         System.out.println();
     }
 
     public static void imprimirCierre(List<String> clave, List<String> cierre, boolean esCierre) {
-        System.out.print((Arrays.toString(clave.toArray())
+        System.out.print(
+                (Arrays.toString(clave.toArray())
                 + "+ = " +
                 Arrays.toString(cierre.toArray()))
                 .replace('[', '(')

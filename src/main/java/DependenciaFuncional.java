@@ -5,7 +5,7 @@ public class DependenciaFuncional {
     private final List<String> implicados;
     private final List<String> implicantes;
 
-    public DependenciaFuncional(String df) throws Exception{
+    public DependenciaFuncional(String df) throws Exception {
         implicados = new ArrayList<>();
         implicantes = new ArrayList<>();
 

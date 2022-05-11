@@ -71,14 +71,22 @@ public class BuscadorClaves {
 
     private void comprobarDF() throws Exception {
         for (DependenciaFuncional df : dependencias) {
-            for (String implicante : df.getImplicantes()) {
-                if (!atributos.contains(implicante))
-                    throw new Exception("Los atributos no coinciden con las dependencias");
-            }
-            for (String implicado : df.getImplicados()) {
-                if (!atributos.contains(implicado))
-                    throw new Exception("Los atributos no coinciden con las dependencias");
-            }
+            comprobarImplicantes(df.getImplicantes());
+            comprobarImplicados(df.getImplicados());
+        }
+    }
+
+    private void comprobarImplicados(List<String> implicados) throws Exception {
+        for (String implicado : implicados) {
+            if (!atributos.contains(implicado))
+                throw new Exception("Los atributos no coinciden con las dependencias");
+        }
+    }
+
+    private void comprobarImplicantes(List<String> implicantes) throws Exception {
+        for (String implicante : implicantes) {
+            if (!atributos.contains(implicante))
+                throw new Exception("Los atributos no coinciden con las dependencias");
         }
     }
 
@@ -110,15 +118,13 @@ public class BuscadorClaves {
         else {
             List<Clave> candidatos = new ArrayList<>();
             candidatos.add(new Clave(atributosNecesarios));
-            buscarCombinaciones(candidatos, new ArrayList<>(atributosImplicadosImplicantes));
+            buscarCombinaciones(candidatos, new ArrayList<>(atributosImplicadosImplicantes), 1);
         }
-        System.out.println();
     }
 
-    private void buscarCombinaciones(List<Clave> candidatos, List<String> atributosPosibles) {
+    private void buscarCombinaciones(List<Clave> candidatos, List<String> atributosPosibles, int nivel) {
         List<Clave> sigCandidatos = new ArrayList<>();
         List<String> sigAtributosPosibles = new ArrayList<>(atributosPosibles);
-
         for(Clave candidata : candidatos) {
             for (String atributo : atributosPosibles){
                 Clave aux = new Clave(candidata.getClave());
@@ -134,8 +140,8 @@ public class BuscadorClaves {
                 }
             }
         }
-        if (sigCandidatos.size() < atributosPosibles.size())
-            buscarCombinaciones(sigCandidatos, sigAtributosPosibles);
+        if (nivel < 2)
+            buscarCombinaciones(sigCandidatos, sigAtributosPosibles, nivel + 1);
     }
 
     private boolean noEstaEnClaves(List<Clave> claves, Clave posibleClave) {

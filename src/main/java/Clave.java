@@ -49,14 +49,14 @@ public class Clave {
         cierre.addAll(clave);
         for (int i = 0; i < dependencias.size(); i++) {
             DependenciaFuncional df = dependencias.get(i);
-            if (df.contieneImplicante(cierre))
+            if (df.contieneImplicante(cierre)) {
                 for (String aux : df.getImplicados()){
                     if (!cierre.contains(aux)) {
                         i = -1;
                         cierre.add(aux);
                     }
                 }
-
+            }
         }
     }
 }
