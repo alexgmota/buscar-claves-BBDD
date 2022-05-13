@@ -45,12 +45,8 @@ public class BuscadorClaves {
     }
 
     private void cargarDatos(String fichero) {
-        File file = new File(fichero);
-        Scanner sc;
         try {
-            sc = new Scanner(file);
-            leerArchivo(sc);
-            sc.close();
+            leerArchivo(fichero);
             comprobarDF();
         } catch (FileNotFoundException e) {
             System.out.println("No se ha encontrado el archivo.");
@@ -59,7 +55,9 @@ public class BuscadorClaves {
         }
     }
 
-    private void leerArchivo(Scanner sc) throws Exception {
+    private void leerArchivo(String fichero) throws Exception {
+        File file = new File(fichero);
+        Scanner sc = new Scanner(file);
         if (!sc.hasNext()) throw new Exception("Archivo dependencias.txt vacio");
         String [] candidatos = sc.nextLine().split(" ");
         for (String aux : candidatos)
@@ -67,6 +65,7 @@ public class BuscadorClaves {
                 atributos.add(aux);
         while (sc.hasNext())
             dependencias.add(new DependenciaFuncional(sc.nextLine()));
+        sc.close();
     }
 
     private void comprobarDF() throws Exception {

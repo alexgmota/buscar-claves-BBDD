@@ -45,18 +45,22 @@ public class Clave {
     }
 
     private void calcularCierre(List<String> cierre, List<DependenciaFuncional> dependencias) {
-
         cierre.addAll(clave);
         for (int i = 0; i < dependencias.size(); i++) {
             DependenciaFuncional df = dependencias.get(i);
-            if (df.contieneImplicante(cierre)) {
-                for (String aux : df.getImplicados()){
-                    if (!cierre.contains(aux)) {
-                        i = -1;
-                        cierre.add(aux);
-                    }
-                }
+            if (df.contieneImplicante(cierre) && addImplicados(cierre, df)) {
+                i = -1;
             }
         }
+    }
+
+    private boolean addImplicados(List<String> cierre, DependenciaFuncional df) {
+        for (String aux : df.getImplicados()){
+            if (!cierre.contains(aux)) {
+                cierre.add(aux);
+               return true;
+            }
+        }
+        return false;
     }
 }
